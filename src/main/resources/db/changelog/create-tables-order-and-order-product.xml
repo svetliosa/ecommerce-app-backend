@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet id="create-sequence-order" author="svetliosa">
+    <createSequence sequenceName="order_sequence" startValue="1" incrementBy="1"/>
+  </changeSet>
+
+  <changeSet id="create-table-order" author="svetliosa">
+    <createTable tableName="ORDER">
+      <column name="ID" type="bigint">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="PUBLIC_ID" type="uniqueidentifier">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="STATUS" type="varchar(256)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="FK_CUSTOMER" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="STRIPE_SESSION_ID" type="varchar(256)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CREATED_DATE" type="timestamp"/>
+      <column name="LAST_MODIFIED_DATE" type="timestamp"/>
+    </createTable>
+
+    <addForeignKeyConstraint baseColumnNames="FK_CUSTOMER" baseTableName="ORDER" constraintName="FK_USER_ORDER_ID" referencedColumnNames="ID" referencedTableName="ECOMMERCE_USER"/>
+  </changeSet>
+
+  <changeSet id="create-table-ordered-product" author="svetliosa">
+    <createTable tableName="ORDERED_PRODUCT">
+      <column name="FK_ORDER" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="FK_PRODUCT" type="uniqueidentifier">
+        <constraints nullable="false"/>
+      </column>
+      <column name="QUANTITY" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="PRICE" type="float">
+        <constraints nullable="false"/>
+      </column>
+      <column name="PRODUCT_NAME" type="varchar(256)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addPrimaryKey columnNames="FK_ORDER, FK_PRODUCT" tableName="ORDERED_PRODUCT"/>
+
+    <addForeignKeyConstraint baseColumnNames="FK_PRODUCT" baseTableName="ORDERED_PRODUCT" constraintName="FK_ORDERED_PRODUCT_CONSTRAINT" referencedColumnNames="PUBLIC_ID" referencedTableName="PRODUCT"/>
+    <addForeignKeyConstraint baseColumnNames="FK_ORDER" baseTableName="ORDERED_PRODUCT" constraintName="FK_ORDERED_ORDER_CONSTRAINT" referencedColumnNames="ID" referencedTableName="ORDER"/>
+  </changeSet>
+
+</databaseChangeLog>
